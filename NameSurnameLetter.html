@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <title>My name</title>
+    <body>
+        <div> Change Color<input id="COLOR" type="range" min="0" max="6" step ="1" value="0"/></div>
+        <div>O-X<input id="O-XTranslation" type="range" min="-1" max="1" step="0.1" value="-1" /></div>
+        <div>O-Y<input id="O-YTranslation" type="range" min="-1" max="1" step="0.1" value="-1" /></div>
+        <div>Y-X<input id="Y-XTranslation" type="range" min="-1" max="1" step="0.1" value="-1" /></div>
+        <div>Y-Y<input id="Y-YTranslation" type="range" min="-1" max="1" step="0.1" value="-1" /></div>
+        <div>BOTH-X<input id="BOTH-X" type="range" min="-1" max="1" step="0.1" value="-1" /></div>
+        <div>BOTH-Y<input id="BOTH-Y" type="range" min="-1" max="1" step="0.1" value="-1" /></div>
+        <div>ROTATE-Y<input id="Rotate" type="range" min="0" max="360" step="1" value="0"/></div>
+        <div>ROTATE-BOTH<input id="RotateB" type="range" min="0" max="360" step="1" value="0"/></div>
+        <div>ROTATE-O<input id="RotateO" type="range" min="0" max="360" step="1" value="0"/></div>
+        <div>SCALE-Y-X<input id="ScaleY" type="range" min="-5" max="5" step="0.01" value="0" precision="2"/></div>
+        <div>SCALE-Y-Y<input id="ScaleY-Y" type="range" min="-5" max="5" step="0.01" value="0" precision="2"/></div>
+        <div>SCALE-O-X<input id="ScaleO-X" type="range" min="-5" max="5" step="0.01" value="0" precision="2"/></div>
+        <div>SCALE-O-Y<input id="ScaleO-Y" type="range" min="-5" max="5" step="0.01" value="0" precision="2"/></div>
+        <div>SCALE-B-X<input id="Scale-B-X" type="range" min="-5" max="5" step="0.01" value="0" precision="2"/></div>
+        <div>SCALE-B-Y<input id="Scale-B-Y" type="range" min="-5" max="5" step="0.01" value="0" precision="2"/></div>
+
+        <canvas id ="Mycanvas" width="800" height="800"></canvas>
+    </body>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 v_Color;
+        varying vec4 u_color;
+
+        uniform vec2 u_translation;
+        uniform vec2 u_rotation;
+        uniform vec2 u_scale;
+        void main(){
+            vec4 scaledPosition = vPosition * vec4(u_scale,0,0);
+            vec4 rotatedPosition = vec4( scaledPosition.x * u_rotation.y +scaledPosition.y * u_rotation.x,
+            scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x,vPosition.z,vPosition.w);
+            gl_Position = rotatedPosition  + vec4(u_translation,0.0,0.0);
+            u_color = v_Color;
+        }
+    </script>
+    <script id="vertex-shaderY" type="x-shader/x-vertex">
+        attribute vec4 rPosition;
+        attribute vec4 rColor;
+        varying vec4 Ycolor;
+        
+        uniform vec2 Y_translation;
+        uniform vec2 Y_rotation;
+        uniform vec2 Y_scale;
+        uniform vec2 Y_resolution;
+        void main(){
+            vec4 scaledPositionY = rPosition * vec4(Y_scale,0,0);
+            vec4 rotatedPositionY= vec4(scaledPositionY.x * Y_rotation.y + scaledPositionY.y * Y_rotation.x,
+            scaledPositionY.y * Y_rotation.y - scaledPositionY.x * Y_rotation.x,rPosition.z,rPosition.w);
+            gl_Position = rotatedPositionY + vec4(Y_translation,0.0,0.0);
+            Ycolor = rColor;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 u_color;
+        void main(){
+           
+            gl_FragColor = u_color;
+            
+        }
+    </script>
+    <script id="fragment-shaderY" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 Ycolor;
+
+        void main(){
+            gl_FragColor = Ycolor;
+        }
+    </script>
+    <script src="17290069.js"></script>
+    <script src="../common/MV.js"></script>
+    <script src="../common/initShaders.js"></script>
+    <script src="../common/webgl-utils.js"></script>
+</html>
